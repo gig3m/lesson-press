@@ -93,7 +93,36 @@ export function buildProgram(): Command {
       });
     });
 
+  program
+    .command('doctor')
+    .description('Check that pandoc and tectonic are present and up to date')
+    .option('--pandoc <bin>', 'override pandoc binary')
+    .option('--tectonic <bin>', 'override tectonic binary')
+    .action(async (opts: { pandoc?: string; tectonic?: string }) => {
+      const { runDoctor } = await import('./doctor.js');
+      const r = await runDoctor({
+        pandocBin: opts.pandoc,
+        tectonicBin: opts.tectonic,
+      });
+      process.stdout.write(`pandoc:   ${formatProbe(r.pandoc)}\n`);
+      process.stdout.write(`tectonic: ${formatProbe(r.tectonic)}\n`);
+      if (!r.ok) {
+        throw new PipelineError('doctor: toolchain check failed');
+      }
+    });
+
   return program;
+}
+
+function formatProbe(p: {
+  found: boolean;
+  path?: string;
+  version?: string;
+  error?: string;
+}): string {
+  if (!p.found) return `MISSING (${p.error})`;
+  if (p.error) return `${p.path} (error: ${p.error})`;
+  return `${p.path} v${p.version}`;
 }
 
 async function readStdin(): Promise<string> {
