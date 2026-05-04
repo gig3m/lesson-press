@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdtempSync, rmSync, copyFileSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { resolveBinary } from './resolveBinary.js';
@@ -35,8 +35,10 @@ export async function render(opts: RenderOptions): Promise<void> {
     : readFileSync(opts.inputPath, 'utf8');
 
   // Compute author fallback. Pandoc's --metadata overrides YAML.
+  // Collapse whitespace so YAML block scalars (`>` / `|`) can't smuggle
+  // newlines into the argv-level --metadata key=value.
   const { data } = parseFrontmatter(source);
-  const author = normalizeAuthor(data);
+  const author = normalizeAuthor(data)?.replace(/\s+/g, ' ').trim();
 
   // Image search path: input file's directory (or cwd for stdin).
   const inputDir = isStdin ? process.cwd() : path.dirname(path.resolve(opts.inputPath));
@@ -80,6 +82,7 @@ export async function render(opts: RenderOptions): Promise<void> {
       );
     }
 
+    mkdirSync(path.dirname(path.resolve(opts.outputPath)), { recursive: true });
     copyFileSync(workOutput, opts.outputPath);
   } finally {
     if (!opts.keepTmp) {

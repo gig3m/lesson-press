@@ -12,13 +12,18 @@ import { existsSync } from 'node:fs';
  */
 export function defaultAssetDir(): string {
   const here = path.dirname(fileURLToPath(import.meta.url));
-  // Walk up until we find a sibling `assets/template.latex`.
   // dev:  src/assetPaths.ts -> ../assets
   // dist: dist/assetPaths.js -> ../assets
   return path.resolve(here, '..', 'assets');
 }
 
 export function validateAssetDir(dir: string): void {
+  if (!existsSync(dir)) {
+    throw new Error(
+      `Asset directory does not exist: ${dir}. ` +
+        `Pass --asset-dir to override or rebuild the package.`
+    );
+  }
   const required = [
     path.join(dir, 'template.latex'),
     path.join(dir, 'filters/fenced-divs.lua'),
