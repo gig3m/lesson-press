@@ -1,0 +1,6 @@
+Hello, World
+A smoke-test lesson
+This is the body of the lesson.
+It has a paragraph and some emphasis.
+A Subheading
+And a closing paragraph.
