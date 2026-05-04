@@ -2,7 +2,8 @@
 import { Command } from 'commander';
 import { existsSync, mkdirSync, statSync } from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { realpathSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { render, PipelineError } from './render.js';
 
 interface RenderOpts {
@@ -155,11 +156,19 @@ export async function main(argv: string[]): Promise<number> {
 }
 
 // Only auto-run when invoked as the entry script (not when imported by tests).
-const isEntry =
-  process.argv[1] !== undefined &&
-  import.meta.url === pathToFileURL(fileURLToPath(import.meta.url)).href &&
-  import.meta.url === pathToFileURL(process.argv[1]).href;
-if (isEntry) {
+// Resolve symlinks on argv[1] so `npm link` / `npm install -g` invocations
+// (where argv[1] is a bin symlink to the real dist/cli.js) still match
+// import.meta.url, which always reflects the realpath.
+function isEntryScript(): boolean {
+  if (!process.argv[1]) return false;
+  try {
+    const argvUrl = pathToFileURL(realpathSync(process.argv[1])).href;
+    return import.meta.url === argvUrl;
+  } catch {
+    return false;
+  }
+}
+if (isEntryScript()) {
   main(process.argv).then((code) => {
     process.exitCode = code;
   });
