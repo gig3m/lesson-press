@@ -34,23 +34,27 @@ describe('fenced-divs.lua', () => {
   ];
 
   for (const [cls, env] of cases) {
-    it(`wraps :::${cls} in ${env}`, () => {
+    it(`wraps :::${cls} in ${env} with body inside the env`, () => {
       const out = runFilter(`:::${cls}\nhi\n:::\n`);
-      expect(out).toContain(`\\begin{${env}}`);
-      expect(out).toContain(`\\end{${env}}`);
+      // Assert structural invariant: \begin{env} ... hi ... \end{env}
+      // (toContain alone would pass on a comment or stray RawInline.)
+      const re = new RegExp(
+        `\\\\begin\\{${env}\\}[\\s\\S]*?hi[\\s\\S]*?\\\\end\\{${env}\\}`
+      );
+      expect(out).toMatch(re);
     });
   }
 
-  it('passes unknown classes through untouched', () => {
+  it('passes unknown classes through untouched (body preserved, no env wrap)', () => {
     const out = runFilter(`:::unknown-class\nhi\n:::\n`);
     expect(out).not.toContain('\\begin{unknown-class}');
-    expect(out).toContain('hi');
+    expect(out).toMatch(/hi/);
   });
 
-  it('rewrites italic-only paragraph in :::discussion OL item to \\answerparagraph', () => {
+  it('rewrites italic-only paragraph in :::discussion OL item to \\answerparagraph with the inline content', () => {
     const md =
       ':::discussion\n1. What is X?\n\n   *An answer.*\n\n:::\n';
     const out = runFilter(md);
-    expect(out).toContain('\\answerparagraph{');
+    expect(out).toMatch(/\\answerparagraph\{[^}]*An answer\.[^}]*\}/);
   });
 });
