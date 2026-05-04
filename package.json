@@ -1,6 +1,6 @@
 {
   "name": "lesson-press",
-  "version": "0.1.0-dev",
+  "version": "0.1.0",
   "description": "Render Pandoc-fenced-div Markdown lessons to print-quality PDF.",
   "type": "module",
   "bin": {

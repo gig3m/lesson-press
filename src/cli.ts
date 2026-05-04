@@ -21,7 +21,7 @@ export function buildProgram(): Command {
   program
     .name('lesson-press')
     .description('Render Pandoc-fenced-div Markdown lessons to PDF')
-    .version('0.1.0-dev')
+    .version('0.1.0')
     .exitOverride();
 
   program
