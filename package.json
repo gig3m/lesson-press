@@ -9,7 +9,7 @@
   "files": ["dist/", "assets/"],
   "scripts": {
     "build": "tsc",
-    "postbuild": "chmod +x dist/cli.js bin/lesson-press",
+    "postbuild": "chmod +x dist/cli.js",
     "dev": "tsx src/cli.ts",
     "test": "npm run build && vitest run",
     "test:watch": "vitest",

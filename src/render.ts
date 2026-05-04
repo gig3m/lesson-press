@@ -18,6 +18,14 @@ export interface RenderOptions {
   stdinContent?: string;
 }
 
+/** Thrown when the pandoc + tectonic pipeline fails for any reason. */
+export class PipelineError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'PipelineError';
+  }
+}
+
 export async function render(opts: RenderOptions): Promise<void> {
   const assetDir = opts.assetDir ?? defaultAssetDir();
   validateAssetDir(assetDir);
@@ -85,7 +93,7 @@ export async function render(opts: RenderOptions): Promise<void> {
 
     const r = spawnSync(pandoc, args, { encoding: 'utf8' });
     if (r.status !== 0) {
-      throw new Error(
+      throw new PipelineError(
         `pandoc/tectonic failed (exit ${r.status}):\n${r.stderr}`
       );
     }
