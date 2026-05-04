@@ -43,3 +43,26 @@ describe('lesson-press CLI', () => {
     expect(r.stderr).toMatch(/--separate/);
   });
 });
+
+describe('lesson-press CLI stdin', () => {
+  it('reads markdown from stdin when input is "-"', () => {
+    const tmp = mkdtempSync(path.join(tmpdir(), 'cli-stdin-'));
+    const out = path.join(tmp, 'out.pdf');
+    const md = `---\ntitle: "Stdin Test"\nunit: "U"\ncurriculum: "C"\n---\n\nFrom stdin.\n`;
+    try {
+      const r = spawnSync(
+        process.execPath,
+        [CLI, 'render', '-', '-o', out],
+        { input: md, encoding: 'utf8' }
+      );
+      expect(r.status).toBe(0);
+      expect(existsSync(out)).toBe(true);
+
+      const txt = spawnSync('pdftotext', [out, '-'], { encoding: 'utf8' });
+      expect(txt.stdout).toContain('Stdin Test');
+      expect(txt.stdout).toContain('From stdin');
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+});
