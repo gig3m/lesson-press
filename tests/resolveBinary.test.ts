@@ -29,4 +29,16 @@ describe('resolveBinary', () => {
       expect(msg).toMatch(/install|PATH/i);
     }
   });
+
+  it('error message uses basename (not full path) in install/flag suggestions when absolute path fails', () => {
+    try {
+      resolveBinary('/opt/nonexistent/pandoc');
+    } catch (e) {
+      const msg = (e as Error).message;
+      expect(msg).toContain('/opt/nonexistent/pandoc');
+      expect(msg).toContain('brew install pandoc');
+      expect(msg).toContain('--pandoc');
+      expect(msg).not.toContain('brew install /opt/nonexistent/pandoc');
+    }
+  });
 });

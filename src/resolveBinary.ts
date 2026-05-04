@@ -3,11 +3,12 @@ import { existsSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 export class BinaryNotFoundError extends Error {
-  constructor(name: string) {
+  constructor(nameOrPath: string) {
+    const base = path.basename(nameOrPath);
     super(
-      `Could not locate '${name}' binary. ` +
-        `Either install it (e.g. \`brew install ${name}\`), put it on PATH, ` +
-        `or pass an absolute path via --${name}.`
+      `Could not locate '${nameOrPath}' binary. ` +
+        `Either install it (e.g. \`brew install ${base}\`), put it on PATH, ` +
+        `or pass an absolute path via --${base}.`
     );
     this.name = 'BinaryNotFoundError';
   }
