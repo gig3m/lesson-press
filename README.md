@@ -31,10 +31,20 @@ brew install pandoc tectonic poppler
 
 ## Install
 
+From a clone (current path — package is not yet published to npm):
+
+```bash
+git clone https://github.com/gig3m/lesson-press.git
+cd lesson-press
+npm install
+npm run build
+npm link    # makes `lesson-press` callable globally
+```
+
+Once published:
+
 ```bash
 npm install -g lesson-press
-# or, from a clone:
-npm install && npm run build && npm link
 ```
 
 ## Usage

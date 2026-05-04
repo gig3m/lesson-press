@@ -6,16 +6,16 @@ Standalone TypeScript CLI that renders Pandoc-fenced-div Markdown lessons to pri
 
 | File | Role |
 |------|------|
-| `src/cli.ts` | commander-based CLI entry; dispatches `render` and `doctor` subcommands |
-| `src/render.ts` | `render(opts)` — shells pandoc + tectonic with bundled assets |
-| `src/resolveBinary.ts` | pandoc/tectonic binary discovery (PATH → Homebrew/system fallbacks) |
-| `src/frontmatter.ts` | YAML frontmatter parsing + `<unit> · <curriculum>` author fallback |
-| `src/doctor.ts` | toolchain version probe |
-| `src/assetPaths.ts` | resolves bundled assets relative to the running script |
-| `assets/template.latex` | Pandoc LaTeX template (lifted from waymark) |
-| `assets/filters/fenced-divs.lua` | Lua filter mapping eleven fenced-div classes → tcolorbox envs |
+| `src/cli.ts` | commander-based CLI entry; exports `buildProgram()` and `main(argv)` so tests can import without auto-parsing argv. Dispatches `render` and `doctor` subcommands |
+| `src/render.ts` | `render(opts)` — shells pandoc + tectonic with bundled assets. Throws typed `PipelineError` on toolchain failure (cli.ts maps to exit code 2) |
+| `src/resolveBinary.ts` | pandoc/tectonic binary discovery (PATH → Homebrew/system fallbacks). Throws `BinaryNotFoundError` with actionable message |
+| `src/frontmatter.ts` | YAML frontmatter parsing (gray-matter) + `<unit> · <curriculum>` author fallback per spec §4.2 |
+| `src/doctor.ts` | toolchain version probe; checks pandoc ≥ 3.1, tectonic ≥ 0.15 |
+| `src/assetPaths.ts` | resolves bundled assets relative to the running script via `import.meta.url`; works in both dev (`tsx src/cli.ts`) and dist (`node dist/cli.js`) layouts |
+| `assets/template.latex` | Pandoc LaTeX template (lifted byte-identical from waymark) |
+| `assets/filters/fenced-divs.lua` | Lua filter mapping eleven fenced-div classes → tcolorbox envs (lifted byte-identical from waymark); also rewrites italic-only paragraphs in `:::discussion` OL items to `\answerparagraph` |
 
-The Node layer is intentionally thin. All visual decisions live in the LaTeX template; all class-to-env mapping in the Lua filter. No JS-side AST manipulation.
+The Node layer is intentionally thin. All visual decisions live in the LaTeX template; all class-to-env mapping in the Lua filter. No JS-side AST manipulation. The renderer also injects `--metadata titlepage=true` when frontmatter omits it, since pandoc's `$if(titlepage)$` returns false on undefined and the spec defaults it to true.
 
 ## Commands
 
@@ -43,7 +43,11 @@ See `docs/contract.md`. One `.md` = one PDF. Frontmatter on top, body uses Commo
 
 ## Testing
 
-Goldens at `tests/golden/<name>/{input.md,expected.txt}` (and `images/` where used). Each test renders the input and asserts every non-empty line of `expected.txt` appears in the resulting PDF's `pdftotext` output (whitespace-tolerant, order-independent within a single line — pdftotext layout ordering is unstable).
+34 tests across 6 files (vitest). Unit tests cover `resolveBinary`, `frontmatter`, `doctor`, and the lua filter (per-class via spawned pandoc). Integration tests cover the CLI (`tests/cli.test.ts` — file input, stdin, `--separate`, multi-input rejection) and the end-to-end pipeline via three goldens (`tests/render.test.ts`).
+
+Goldens live at `tests/golden/<name>/{input.md,expected.txt}` (and `images/` where used). Each test renders the input and asserts every non-empty line of `expected.txt` appears in the resulting PDF's `pdftotext` output (whitespace-tolerant, order-independent within a single line — pdftotext layout ordering is unstable). Pass `runGolden(name, { keepTmp: true })` to preserve the work dir for debugging.
+
+The `npm test` script builds first (`tsc`) and then runs vitest, because the CLI integration tests spawn `node dist/cli.js`. CI runs the same.
 
 ## Design and plan
 
