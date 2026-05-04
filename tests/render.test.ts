@@ -7,3 +7,10 @@ describe('render golden: hello', () => {
     expectGoldenContains(pdfText, expected);
   });
 });
+
+describe('render golden: all-classes', () => {
+  it('renders every fenced-div class without error', async () => {
+    const { pdfText, expected } = await runGolden('all-classes');
+    expectGoldenContains(pdfText, expected);
+  });
+});
