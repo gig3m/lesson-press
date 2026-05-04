@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# golden test artifacts
+tests/golden/**/actual.pdf
+tests/golden/**/actual.txt
+tests/tmp/
