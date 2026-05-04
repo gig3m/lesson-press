@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install pandoc + tectonic + poppler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc poppler-utils
+          # tectonic is not in apt; use the official install script
+          curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net | sh
+          sudo mv tectonic /usr/local/bin/
+
+      - name: Verify toolchain
+        run: |
+          pandoc --version | head -1
+          tectonic --version
+          pdftotext -v
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
