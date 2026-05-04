@@ -62,6 +62,7 @@ export async function render(opts: RenderOptions): Promise<void> {
       '--pdf-engine', tectonic,
       '--pdf-engine-opt=-Z',
       `--pdf-engine-opt=search-path=${workDir}`,
+      '--pdf-engine-opt=-Z',
       `--pdf-engine-opt=search-path=${inputDir}`,
       '-o', workOutput,
       workInput,
