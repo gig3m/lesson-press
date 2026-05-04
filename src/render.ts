@@ -70,6 +70,13 @@ export async function render(opts: RenderOptions): Promise<void> {
     if (author !== undefined) {
       args.push('--metadata', `author=${author}`);
     }
+    // Spec §4.2: `titlepage` defaults true. Pandoc's $if(titlepage)$
+    // returns false for undefined, so inject the default here. An
+    // explicit `titlepage: false` in YAML is preserved (we only set
+    // the metadata when the user didn't).
+    if (data.titlepage === undefined) {
+      args.push('--metadata', 'titlepage=true');
+    }
 
     if (opts.verbose) {
       // Print to stderr so stdout stays clean for piped use cases.

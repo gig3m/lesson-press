@@ -15,7 +15,10 @@ export interface GoldenResult {
   expected: string;
 }
 
-export async function runGolden(name: string): Promise<GoldenResult> {
+export async function runGolden(
+  name: string,
+  opts: { keepTmp?: boolean } = {}
+): Promise<GoldenResult> {
   const dir = path.join(ROOT, 'tests/golden', name);
   const input = path.join(dir, 'input.md');
   const expectedPath = path.join(dir, 'expected.txt');
@@ -23,8 +26,13 @@ export async function runGolden(name: string): Promise<GoldenResult> {
   const pdf = path.join(tmp, 'out.pdf');
 
   try {
-    await render({ inputPath: input, outputPath: pdf });
+    await render({ inputPath: input, outputPath: pdf, keepTmp: opts.keepTmp });
     const r = spawnSync('pdftotext', [pdf, '-'], { encoding: 'utf8' });
+    if (r.error && (r.error as NodeJS.ErrnoException).code === 'ENOENT') {
+      throw new Error(
+        `pdftotext not found on PATH. Install poppler (e.g. \`brew install poppler\`).`
+      );
+    }
     if (r.status !== 0) {
       throw new Error(`pdftotext failed: ${r.stderr}`);
     }
@@ -33,7 +41,11 @@ export async function runGolden(name: string): Promise<GoldenResult> {
       expected: readFileSync(expectedPath, 'utf8'),
     };
   } finally {
-    rmSync(tmp, { recursive: true, force: true });
+    if (!opts.keepTmp) {
+      rmSync(tmp, { recursive: true, force: true });
+    } else {
+      process.stderr.write(`[golden ${name}] kept tmp dir: ${tmp}\n`);
+    }
   }
 }
 
