@@ -1,0 +1,278 @@
+% Waymark lesson PDF template
+% Consumed by pandoc → tectonic (XeLaTeX). Uses fontspec for native
+% Unicode so em-dashes, smart quotes, and punctuation like · render
+% correctly. Sticks to Latin Modern so no system fonts are needed.
+\documentclass[11pt]{scrartcl}
+
+\usepackage[margin=0.85in]{geometry}
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+% Default body font to sans (matches the Teaching Manual aesthetic).
+% Latin Modern Sans is always available via \sffamily.
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{scrlayer-scrpage}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage[hidelinks,colorlinks=true,urlcolor=lmblue]{hyperref}
+\usepackage{amssymb}
+\usepackage{graphicx}
+% Pandoc emits longtable when a markdown pipe-table crosses a page
+% boundary. Without this package, rendering crashes on those.
+\usepackage{longtable}
+\usepackage{booktabs}
+% Underline support. Pandoc 3.x emits \ul{...} for spans carrying the
+% `.underline` class; older versions use \uline{...}. Load ulem (which
+% defines \uline) and alias \ul to it so either spelling resolves.
+\usepackage[normalem]{ulem}
+\providecommand{\ul}{\uline}
+% Safety nets for other pandoc-emitted commands that custom templates
+% are expected to define. \providecommand only defines them if they
+% don't already exist, so a future package load takes precedence.
+\providecommand{\passthrough}[1]{#1}
+\providecommand{\textnohyphenation}[1]{#1}
+\usepackage{newunicodechar}
+% Latin Modern lacks a few symbols. Substitute them with math-mode
+% equivalents from amssymb so pedagogical content renders cleanly.
+\newunicodechar{≠}{\ensuremath{\neq}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{←}{\ensuremath{\leftarrow}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{×}{\ensuremath{\times}}
+
+% ---------------------------------------------------------------- colors
+\definecolor{wmslate}{HTML}{1F2937}
+\definecolor{wmgold}{HTML}{B08D57}
+\definecolor{wmblue}{HTML}{2563EB}
+\definecolor{wmbluelite}{HTML}{EFF6FF}
+\definecolor{wmgreen}{HTML}{059669}
+\definecolor{wmgreylite}{HTML}{F3F4F6}
+\definecolor{wmgreybrd}{HTML}{E5E7EB}
+\definecolor{wmtxt}{HTML}{111827}
+\definecolor{wmmuted}{HTML}{6B7280}
+\definecolor{lmblue}{HTML}{1E40AF}
+
+% ---------------------------------------------------------------- page
+\pagestyle{scrheadings}
+\clearpairofpagestyles
+\setkomafont{pageheadfoot}{\normalfont\sffamily\footnotesize\color{wmmuted}}
+\ihead{\MakeUppercase{$title$}}
+\ohead{\MakeUppercase{$author$}}
+\ofoot{\thepage}
+\KOMAoptions{headsepline=0.4pt}
+
+% ---------------------------------------------------------------- headings
+% H1 — section (day / major phase). Sized up so it clearly outranks
+% H2 subsection (Teaching Points etc.) which carries the grey bar.
+\titleformat{\section}{\sffamily\bfseries\LARGE\color{wmtxt}}{}{0em}{}
+\titlespacing*{\section}{0pt}{1.8em}{0.6em}
+
+% H2 — subsection with grey bar + blue left rule. Using block shape
+% and a helper command so the title argument #1 is injected cleanly.
+\newcommand{\wmhtwo}[1]{%
+  \noindent\colorbox{wmgreylite}{%
+    \parbox[t]{\dimexpr\linewidth-2\fboxsep}{%
+      \hspace{0.1em}\textcolor{wmblue}{\rule[-0.15em]{2pt}{1.15em}}\hspace{0.55em}\strut#1%
+    }%
+  }%
+}
+\titleformat{\subsection}[block]
+  {\sffamily\bfseries\normalsize\color{wmtxt}}
+  {}{0em}
+  {\wmhtwo}
+\titlespacing*{\subsection}{0pt}{1.2em}{0.4em}
+
+\titleformat{\subsubsection}{\sffamily\bfseries\small\color{wmtxt}}{}{0em}{}
+\titlespacing*{\subsubsection}{0pt}{0.9em}{0.3em}
+
+% ---------------------------------------------------------------- lists
+\setlist[itemize]{itemsep=0.1em,topsep=0.2em,leftmargin=1.2em}
+\setlist[enumerate]{itemsep=0.2em,topsep=0.2em,leftmargin=1.6em}
+
+% ---------------------------------------------------------------- pandoc compat
+% pandoc emits \tightlist inside itemize; define it to suppress extra spacing.
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% ---------------------------------------------------------------- callouts
+% Base style — each env overrides colors, label, decoration.
+\tcbset{
+  wmbase/.style={
+    enhanced, breakable,
+    boxrule=0pt, arc=1mm, outer arc=1mm,
+    boxsep=0pt, left=10pt, right=10pt, top=8pt, bottom=8pt,
+    before skip=6pt, after skip=6pt,
+  },
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::read (pill)
+% Inline pill — used as a block so it stands alone.
+\newtcolorbox{readpill}{
+  wmbase,
+  colback=wmbluelite, colupper=lmblue,
+  fontupper=\sffamily\bfseries\small,
+  left=10pt, right=10pt, top=3pt, bottom=3pt,
+  arc=6pt, outer arc=6pt,
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::scripture
+\newtcolorbox{scripturebox}{
+  wmbase,
+  colback=wmbluelite, colframe=wmbluelite,
+  borderline west={2pt}{0pt}{lmblue},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=lmblue]
+    at (frame.north west) {SCRIPTURE};},
+  top=18pt,
+  fontupper=\itshape,
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ voice callouts
+\tcbset{
+  wmvoice/.style={
+    wmbase,
+    colback=white, colframe=white,
+    sharp corners, frame hidden,
+    fontupper=\itshape,
+    top=18pt,
+  },
+}
+
+\definecolor{wmsay}{HTML}{4F46E5}
+\definecolor{wmsaybg}{HTML}{EEF2FF}
+\newtcolorbox{saybox}{
+  wmbase, colback=wmsaybg, colframe=wmsaybg,
+  borderline west={2pt}{0pt}{wmsay},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmsay]
+    at (frame.north west) {SAY};},
+  top=18pt, fontupper=\itshape,
+}
+
+\definecolor{wmask}{HTML}{0891B2}
+\definecolor{wmaskbg}{HTML}{ECFEFF}
+\newtcolorbox{askbox}{
+  wmbase, colback=wmaskbg, colframe=wmaskbg,
+  borderline west={2pt}{0pt}{wmask},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmask]
+    at (frame.north west) {ASK};},
+  top=18pt, fontupper=\itshape,
+}
+
+\definecolor{wmpray}{HTML}{CA8A04}
+\definecolor{wmpraybg}{HTML}{FEFCE8}
+\newtcolorbox{prayerbox}{
+  wmbase, colback=wmpraybg, colframe=wmpraybg,
+  borderline west={2pt}{0pt}{wmpray},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmpray]
+    at (frame.north west) {PRAY};},
+  top=18pt, fontupper=\itshape,
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::discussion
+\newtcolorbox{discussionbox}{
+  wmbase,
+  colback=wmgreylite, colframe=wmgreybrd, boxrule=0.4pt,
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmblue]
+    at (frame.north west) {DISCUSSION};},
+  top=18pt,
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::question
+\definecolor{wmq}{HTML}{0284C7}
+\definecolor{wmqbg}{HTML}{F0F9FF}
+\newtcolorbox{questionbox}{
+  wmbase, colback=wmqbg, colframe=wmqbg,
+  borderline west={2pt}{0pt}{wmq},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmq]
+    at (frame.north west) {DISCUSSION QUESTION};},
+  top=18pt,
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::key-truth
+\definecolor{wmkey}{HTML}{D97706}
+\definecolor{wmkeybg}{HTML}{FEF3C7}
+\definecolor{wmkeytxt}{HTML}{92400E}
+\newtcolorbox{keytruthbox}{
+  wmbase, colback=wmkeybg, colframe=wmkeybg,
+  borderline west={2pt}{0pt}{wmkey},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmkeytxt]
+    at (frame.north west) {KEY TRUTH};},
+  top=18pt,
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::note
+\definecolor{wmnote}{HTML}{10B981}
+\definecolor{wmnotebg}{HTML}{ECFDF5}
+\definecolor{wmnotetxt}{HTML}{047857}
+\newtcolorbox{notebox}{
+  wmbase, colback=wmnotebg, colframe=wmnotebg,
+  borderline west={2pt}{0pt}{wmnote},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmnotetxt]
+    at (frame.north west) {NOTE};},
+  top=18pt,
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::transition
+\definecolor{wmtrans}{HTML}{DC2626}
+\definecolor{wmtransbg}{HTML}{FEF2F2}
+\definecolor{wmtranstxt}{HTML}{991B1B}
+\newtcolorbox{transitionbox}{
+  wmbase, colback=wmtransbg, colframe=wmtransbg,
+  borderline west={2pt}{0pt}{wmtrans},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmtranstxt]
+    at (frame.north west) {TRANSITION};},
+  top=18pt,
+}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::materials
+\newtcolorbox{materialsbox}{
+  wmbase,
+  colback=wmgreylite, colframe=wmgreybrd, boxrule=0.4pt,
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmtxt]
+    at (frame.north west) {MATERIALS};},
+  top=18pt,
+}
+
+% Checklist-style list rendering inside :::materials. The filter could
+% also inject this via raw LaTeX if needed.
+\newlist{checklist}{itemize}{1}
+\setlist[checklist]{label=$$\square$$, leftmargin=1.4em}
+
+% ---------------------------------------------------------------- answer
+% Override the placeholder from Task B3.
+\providecommand{\answerparagraph}[1]{\par\textit{#1}}
+\renewcommand{\answerparagraph}[1]{%
+  \par\vspace{0.2em}\hspace{1em}%
+  \textcolor{wmgreen}{\small$$\rightarrow$$\ \textit{#1}}\par
+}
+
+% ---------------------------------------------------------------- body
+\begin{document}
+
+$if(titlepage)$
+\begin{titlepage}
+  \thispagestyle{empty}
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[wmslate] (current page.north west) rectangle (current page.south east);
+  \end{tikzpicture}
+  \vspace*{5cm}
+  \begin{center}
+    \color{white}
+    {\sffamily\bfseries\Huge $title$\par}
+    \vspace{1em}
+    {\color{wmgold}\rule{3cm}{2pt}}
+    $if(subtitle)$\vspace{1.2em}\par{\sffamily\Large $subtitle$\par}$endif$
+    $if(scripture_text)$\vspace{2em}{\sffamily\normalsize Scripture · $scripture_text$\par}$endif$
+    $if(memory_verse)$\vspace{0.4em}{\sffamily\normalsize Memory · $memory_verse$\par}$endif$
+    $if(big_idea)$\vspace{1.8em}\begin{minipage}{0.75\textwidth}\centering\itshape $big_idea$\end{minipage}$endif$
+  \end{center}
+\end{titlepage}
+$endif$
+
+$body$
+
+\end{document}
