@@ -14,3 +14,10 @@ describe('render golden: all-classes', () => {
     expectGoldenContains(pdfText, expected);
   });
 });
+
+describe('render golden: image-sidecar', () => {
+  it('resolves images relative to the input file', async () => {
+    const { pdfText, expected } = await runGolden('image-sidecar');
+    expectGoldenContains(pdfText, expected);
+  });
+});

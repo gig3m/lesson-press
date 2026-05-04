@@ -1,0 +1,3 @@
+Image Sidecar
+Body before image.
+Body after image.
