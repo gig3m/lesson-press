@@ -66,3 +66,31 @@ describe('lesson-press CLI stdin', () => {
     }
   });
 });
+
+describe('lesson-press CLI --separate', () => {
+  it('renders multiple inputs to separate PDFs in a directory', () => {
+    const tmp = mkdtempSync(path.join(tmpdir(), 'cli-sep-'));
+    try {
+      const r = spawnSync(
+        process.execPath,
+        [
+          CLI,
+          'render',
+          path.join(ROOT, 'tests/golden/hello/input.md'),
+          path.join(ROOT, 'tests/golden/all-classes/input.md'),
+          '--separate',
+          '-o',
+          tmp,
+        ],
+        { encoding: 'utf8' }
+      );
+      expect(r.status).toBe(0);
+      // basenames collide ("input.md" appears twice); CLI must
+      // disambiguate by parent dir name → "hello.pdf" / "all-classes.pdf"
+      expect(existsSync(path.join(tmp, 'hello.pdf'))).toBe(true);
+      expect(existsSync(path.join(tmp, 'all-classes.pdf'))).toBe(true);
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+});

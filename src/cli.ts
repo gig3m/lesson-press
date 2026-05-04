@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { existsSync, mkdirSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { render, PipelineError } from './render.js';
@@ -41,7 +42,34 @@ export function buildProgram(): Command {
         );
       }
       if (opts.separate) {
-        throw new Error('--separate is implemented in a later task');
+        const outDir = path.resolve(opts.output);
+        if (!existsSync(outDir)) {
+          mkdirSync(outDir, { recursive: true });
+        } else if (!statSync(outDir).isDirectory()) {
+          throw new Error(`--separate output ${outDir} must be a directory`);
+        }
+
+        for (const input of inputs) {
+          if (input === '-') {
+            throw new Error('--separate does not support stdin input');
+          }
+          const inputPath = path.resolve(input);
+          const base = path.basename(inputPath, path.extname(inputPath));
+          const stem =
+            base === 'input' ? path.basename(path.dirname(inputPath)) : base;
+          const outputPath = path.join(outDir, `${stem}.pdf`);
+
+          await render({
+            inputPath,
+            outputPath,
+            assetDir: opts.assetDir,
+            pandocBin: opts.pandoc,
+            tectonicBin: opts.tectonic,
+            keepTmp: opts.keepTmp,
+            verbose: opts.verbose,
+          });
+        }
+        return;
       }
 
       const input = inputs[0];
