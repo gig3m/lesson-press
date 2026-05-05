@@ -67,25 +67,22 @@
 \KOMAoptions{headsepline=0.4pt}
 
 % ---------------------------------------------------------------- headings
-% H1 — section (day / major phase). Sized up so it clearly outranks
-% H2 subsection (Teaching Points etc.) which carries the grey bar.
-\titleformat{\section}{\sffamily\bfseries\LARGE\color{wmtxt}}{}{0em}{}
+% H1 — \section. Unused in body (lesson title comes from frontmatter on
+% the cover); kept defined for completeness.
+\titleformat{\section}{\sffamily\bfseries\huge\color{wmtxt}}{}{0em}{}
 \titlespacing*{\section}{0pt}{1.8em}{0.6em}
 
-% H2 — subsection with grey bar + blue left rule. Using block shape
-% and a helper command so the title argument #1 is injected cleanly.
+% H2 — phase break for the lesson rhythm ("1. Gather", "2. The Story", ...).
+% Gold rule above + LARGE bold sans title. Boxes are reserved for callouts.
 \newcommand{\wmhtwo}[1]{%
-  \noindent\colorbox{wmgreylite}{%
-    \parbox[t]{\dimexpr\linewidth-2\fboxsep}{%
-      \hspace{0.1em}\textcolor{wmblue}{\rule[-0.15em]{2pt}{1.15em}}\hspace{0.55em}\strut#1%
-    }%
-  }%
+  \textcolor{wmgold}{\rule{\linewidth}{0.6pt}}\\[0.35em]%
+  #1%
 }
 \titleformat{\subsection}[block]
-  {\sffamily\bfseries\normalsize\color{wmtxt}}
+  {\sffamily\bfseries\LARGE\color{wmtxt}}
   {}{0em}
   {\wmhtwo}
-\titlespacing*{\subsection}{0pt}{1.2em}{0.4em}
+\titlespacing*{\subsection}{0pt}{2em}{0.6em}
 
 \titleformat{\subsubsection}{\sffamily\bfseries\small\color{wmtxt}}{}{0em}{}
 \titlespacing*{\subsubsection}{0pt}{0.9em}{0.3em}
@@ -111,13 +108,16 @@
 }
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::read (pill)
-% Inline pill — used as a block so it stands alone.
+% One-line scripture reference / passage cue. Bolder than other callouts
+% because it directs the room to a destination (vs :::scripture which
+% carries the text itself).
 \newtcolorbox{readpill}{
   wmbase,
-  colback=wmbluelite, colupper=lmblue,
-  fontupper=\sffamily\bfseries\small,
-  left=10pt, right=10pt, top=3pt, bottom=3pt,
-  arc=6pt, outer arc=6pt,
+  colback=wmbluelite, colframe=lmblue, colupper=lmblue,
+  fontupper=\sffamily\bfseries\large,
+  boxrule=0.6pt,
+  left=14pt, right=14pt, top=7pt, bottom=7pt,
+  arc=10pt, outer arc=10pt,
 }
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::scripture
@@ -142,8 +142,8 @@
   },
 }
 
-\definecolor{wmsay}{HTML}{4F46E5}
-\definecolor{wmsaybg}{HTML}{EEF2FF}
+\definecolor{wmsay}{HTML}{7C3AED}
+\definecolor{wmsaybg}{HTML}{F5F3FF}
 \newtcolorbox{saybox}{
   wmbase, colback=wmsaybg, colframe=wmsaybg,
   borderline west={2pt}{0pt}{wmsay},
