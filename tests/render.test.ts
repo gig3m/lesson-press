@@ -21,3 +21,10 @@ describe('render golden: image-sidecar', () => {
     expectGoldenContains(pdfText, expected);
   });
 });
+
+describe('render golden: wide-table', () => {
+  it('renders a 4-column table without crashing on pandoc calc syntax', async () => {
+    const { pdfText, expected } = await runGolden('wide-table');
+    expectGoldenContains(pdfText, expected);
+  });
+});

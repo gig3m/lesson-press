@@ -43,7 +43,7 @@ See `docs/contract.md`. One `.md` = one PDF. Frontmatter on top, body uses Commo
 
 ## Testing
 
-34 tests across 6 files (vitest). Unit tests cover `resolveBinary`, `frontmatter`, `doctor`, and the lua filter (per-class via spawned pandoc). Integration tests cover the CLI (`tests/cli.test.ts` — file input, stdin, `--separate`, multi-input rejection) and the end-to-end pipeline via three goldens (`tests/render.test.ts`).
+35 tests across 6 files (vitest). Unit tests cover `resolveBinary`, `frontmatter`, `doctor`, and the lua filter (per-class via spawned pandoc). Integration tests cover the CLI (`tests/cli.test.ts` — file input, stdin, `--separate`, multi-input rejection) and the end-to-end pipeline via four goldens (`tests/render.test.ts`).
 
 Goldens live at `tests/golden/<name>/{input.md,expected.txt}` (and `images/` where used). Each test renders the input and asserts every non-empty line of `expected.txt` appears in the resulting PDF's `pdftotext` output (whitespace-tolerant, order-independent within a single line — pdftotext layout ordering is unstable). Pass `runGolden(name, { keepTmp: true })` to preserve the work dir for debugging.
 

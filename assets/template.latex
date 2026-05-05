@@ -23,6 +23,13 @@
 % boundary. Without this package, rendering crashes on those.
 \usepackage{longtable}
 \usepackage{booktabs}
+% For tables wide enough to trigger explicit column widths (typically
+% 3+ columns with substantive content), pandoc emits preambles like
+% `>{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.25}}`.
+% `array` provides `\arraybackslash` and the `>{...}` column-spec extension;
+% `calc` provides `\real{}` and the `*` arithmetic.
+\usepackage{array}
+\usepackage{calc}
 % Underline support. Pandoc 3.x emits \ul{...} for spans carrying the
 % `.underline` class; older versions use \uline{...}. Load ulem (which
 % defines \uline) and alias \ul to it so either spelling resolves.
