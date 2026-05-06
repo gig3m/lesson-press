@@ -23,10 +23,23 @@ as input. The renderer assumes inputs follow this contract exactly.
 | `scripture_text` | string | no | Titlepage block under gold rule |
 | `big_idea` | string | no | Titlepage block |
 | `memory_verse` | string | no | Titlepage block |
+| `optional_video` | map | no | Titlepage block; see below |
 | `toc` | bool | no | Show TOC after titlepage; default `false` |
 | `titlepage` | bool | no | Emit titlepage at all; default `true` |
 
 Unknown keys are silently ignored. Missing optional metadata never errors.
+
+### `optional_video`
+
+A nested map for surfacing a single supplemental video on the titlepage. Only `title` and one URL field are required; extras are ignored.
+
+| Key | Type | Behavior |
+|---|---|---|
+| `title` | string | Video title, displayed under the `OPTIONAL VIDEO` label |
+| `short_url` | string | Printed prominently. Preferred over `url` when both are present |
+| `url` | string | Fallback URL when `short_url` is absent |
+
+The block is omitted entirely when `optional_video` is missing.
 
 ## Block vocabulary
 

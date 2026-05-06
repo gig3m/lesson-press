@@ -28,3 +28,10 @@ describe('render golden: wide-table', () => {
     expectGoldenContains(pdfText, expected);
   });
 });
+
+describe('render golden: cover-video', () => {
+  it('surfaces optional_video title and short_url on the cover', async () => {
+    const { pdfText, expected } = await runGolden('cover-video');
+    expectGoldenContains(pdfText, expected);
+  });
+});

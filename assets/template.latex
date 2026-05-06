@@ -263,19 +263,50 @@
 $if(titlepage)$
 \begin{titlepage}
   \thispagestyle{empty}
+
+  % Page-margin frame — single thin slate rule, near-zero toner.
+  % Sits ~1cm from each page edge so it's reliably inside any printer's
+  % imageable area but outside the 0.85in text margins.
   \begin{tikzpicture}[remember picture, overlay]
-    \fill[wmslate] (current page.north west) rectangle (current page.south east);
+    \draw[wmslate, line width=0.6pt]
+      ([xshift=1cm,yshift=-1cm]current page.north west) rectangle
+      ([xshift=-1cm,yshift=1cm]current page.south east);
   \end{tikzpicture}
-  \vspace*{5cm}
+
+  \vspace*{5.5cm}
   \begin{center}
-    \color{white}
-    {\sffamily\bfseries\Huge $title$\par}
-    \vspace{1em}
-    {\color{wmgold}\rule{3cm}{2pt}}
-    $if(subtitle)$\vspace{1.2em}\par{\sffamily\Large $subtitle$\par}$endif$
-    $if(scripture_text)$\vspace{2em}{\sffamily\normalsize Scripture · $scripture_text$\par}$endif$
-    $if(memory_verse)$\vspace{0.4em}{\sffamily\normalsize Memory · $memory_verse$\par}$endif$
-    $if(big_idea)$\vspace{1.8em}\begin{minipage}{0.75\textwidth}\centering\itshape $big_idea$\end{minipage}$endif$
+    {\sffamily\bfseries\Huge\color{wmtxt} $title$\par}
+    \vspace{0.9em}
+    {\color{wmgold}\rule{3cm}{1.5pt}\par}
+    $if(subtitle)$\vspace{0.9em}{\sffamily\Large\color{wmmuted} $subtitle$\par}$endif$
+
+    \vspace{2.6cm}
+    $if(scripture_text)$
+      {\sffamily\footnotesize\color{wmmuted}\MakeUppercase{Scripture}\par}
+      \vspace{0.25em}
+      {\sffamily\large\color{wmtxt} $scripture_text$\par}
+      \vspace{1.4em}
+    $endif$
+    $if(memory_verse)$
+      {\sffamily\footnotesize\color{wmmuted}\MakeUppercase{Memory verse}\par}
+      \vspace{0.25em}
+      {\sffamily\large\color{wmtxt} $memory_verse$\par}
+      \vspace{1.8em}
+    $endif$
+    $if(optional_video)$
+      {\sffamily\footnotesize\color{wmmuted}\MakeUppercase{Optional video}\par}
+      \vspace{0.25em}
+      $if(optional_video.title)${\sffamily\large\color{wmtxt} $optional_video.title$\par}$endif$
+      \vspace{0.5em}
+      {\sffamily\bfseries\large\color{wmtxt}%
+        $if(optional_video.short_url)$$optional_video.short_url$$else$$if(optional_video.url)$$optional_video.url$$endif$$endif$\par}
+      \vspace{1.8em}
+    $endif$
+    $if(big_idea)$
+      {\color{wmgold}\rule{2cm}{1pt}\par}
+      \vspace{1.1em}
+      \begin{minipage}{0.78\textwidth}\centering\itshape\large\color{wmtxt} $big_idea$\end{minipage}
+    $endif$
   \end{center}
 \end{titlepage}
 $endif$
