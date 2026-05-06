@@ -31,6 +31,7 @@ describe('fenced-divs.lua', () => {
     ['note', 'notebox'],
     ['transition', 'transitionbox'],
     ['materials', 'materialsbox'],
+    ['journal', 'journalbox'],
   ];
 
   for (const [cls, env] of cases) {

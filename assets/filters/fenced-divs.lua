@@ -12,6 +12,7 @@ local envs = {
   ['note']        = 'notebox',
   ['transition']  = 'transitionbox',
   ['materials']   = 'materialsbox',
+  ['journal']     = 'journalbox',
 }
 
 -- True if a Para has exactly one inline child which is an Emph.

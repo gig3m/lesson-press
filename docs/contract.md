@@ -43,7 +43,7 @@ The block is omitted entirely when `optional_video` is missing.
 
 ## Block vocabulary
 
-Eleven fenced-div classes, each rendered as a styled callout.
+Twelve fenced-div classes, each rendered as a styled callout.
 
 | Class | Purpose |
 |---|---|
@@ -58,6 +58,7 @@ Eleven fenced-div classes, each rendered as a styled callout.
 | `:::note` | Teacher aside |
 | `:::transition` | Pedagogical bridge |
 | `:::materials` | Supplies / materials checklist |
+| `:::journal` | Directive for kids to write/draw in their personal journal |
 
 ### Discussion answers
 

@@ -59,3 +59,7 @@ Now turn to your neighbor.
 - Globe
 - Markers
 :::
+
+:::journal
+Write something the lesson made you wonder about.
+:::

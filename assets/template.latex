@@ -223,6 +223,20 @@
   top=18pt,
 }
 
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::journal
+% Directive to the kid to write/draw in their personal journal.
+% Indigo for reflective/personal tone, distinct from the violet of :::say.
+\definecolor{wmjournal}{HTML}{4F46E5}
+\definecolor{wmjournalbg}{HTML}{EEF2FF}
+\definecolor{wmjournaltxt}{HTML}{3730A3}
+\newtcolorbox{journalbox}{
+  wmbase, colback=wmjournalbg, colframe=wmjournalbg,
+  borderline west={2pt}{0pt}{wmjournal},
+  overlay={\node[anchor=north west, xshift=10pt, yshift=-6pt, font=\sffamily\bfseries\tiny, text=wmjournaltxt]
+    at (frame.north west) {JOURNAL};},
+  top=18pt,
+}
+
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ :::transition
 \definecolor{wmtrans}{HTML}{DC2626}
 \definecolor{wmtransbg}{HTML}{FEF2F2}
