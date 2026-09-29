@@ -10,6 +10,8 @@ designed to be embedded in other consumers (e.g., a Laravel app
 rendering on demand) so a lesson written once renders identically
 everywhere.
 
+![A lesson rendered by lesson-press](docs/screenshot.png)
+
 ## Status
 
 v0.1.0 — the CLI, asset pipeline, and three goldens (`hello`,
