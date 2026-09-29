@@ -14,7 +14,7 @@ everywhere.
 
 v0.1.0 — the CLI, asset pipeline, and three goldens (`hello`,
 `all-classes`, `image-sidecar`) are stable. Multi-file packet
-composition, theme overrides, and an Obsidian plugin are deferred.
+composition and theme overrides are not built yet.
 
 ## Requirements
 
@@ -79,10 +79,12 @@ development.
 
 ## Design
 
-[`docs/superpowers/specs/2026-05-04-lesson-press-design.md`](docs/superpowers/specs/2026-05-04-lesson-press-design.md)
-contains the v1 design spec. The implementation plan is at
-[`docs/superpowers/plans/2026-05-04-lesson-press.md`](docs/superpowers/plans/2026-05-04-lesson-press.md).
+One renderer, many hosts: the Lua filter (`assets/filters/`) and LaTeX
+template (`assets/`) are the source of truth, and the CLI is a thin wrapper
+around `pandoc` + `tectonic` that applies them. Anything that can shell out
+to pandoc can reuse the same assets and render the same layout.
+The input format is pinned down in [`docs/contract.md`](docs/contract.md).
 
 ## License
 
-MIT.
+MIT — see [LICENSE](LICENSE).
